@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option csharp_namespace = "AuthServiceProvider.Protos";
+
+package auth;
+
+service RoleService {
+  rpc PromoteToManager (PromotionRequest) returns (PromotionResponse);
+}
+
+message PromotionRequest {
+  string email = 1;      
+}
+
+message PromotionResponse {
+  bool success = 1;
+  string message = 2;
+}
