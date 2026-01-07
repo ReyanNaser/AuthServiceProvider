@@ -27,21 +27,21 @@ namespace AuthServiceProvider.Services
                 return new PromotionResponse { Success = false, Message = "User not found." };
 
             
-            if (!await _roleManager.RoleExistsAsync("Manager"))
+            if (!await _roleManager.RoleExistsAsync(request.Role))
             {
-                await _roleManager.CreateAsync(new IdentityRole("Manager"));
+                await _roleManager.CreateAsync(new IdentityRole(request.Role));
             }
                 
 
             // 2. Add Manager role if they don't have it
-            if (!await _userManager.IsInRoleAsync(user, "Manager"))
+            if (!await _userManager.IsInRoleAsync(user, request.Role))
             {
-                var result = await _userManager.AddToRoleAsync(user, "Manager");
+                var result = await _userManager.AddToRoleAsync(user, request.Role);
                 if (!result.Succeeded)
                     return new PromotionResponse { Success = false, Message = "Failed to assign role." };
             }
 
-            return new PromotionResponse { Success = true, Message = "User promoted successfully." };
+            return new PromotionResponse { Success = true, Message = "Role assigned successfully." };
         }
     }
 

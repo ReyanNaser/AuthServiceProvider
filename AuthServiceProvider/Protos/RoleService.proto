@@ -9,7 +9,8 @@ service RoleService {
 }
 
 message PromotionRequest {
-  string email = 1;      
+  string email = 1;
+  string role =2;
 }
 
 message PromotionResponse {
