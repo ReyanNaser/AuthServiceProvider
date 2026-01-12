@@ -1,6 +1,7 @@
 using AuthServiceProvider;
 using AuthServiceProvider.Data;
 using AuthServiceProvider.Features;
+using AuthServiceProvider.Options;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -26,6 +27,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddGrpc();
 
 builder.Services.AddHostedService<SeedWorker>();
+
+builder.Services.Configure<SeedDataOptions>(
+    builder.Configuration.GetSection("SeedData"));
 
 builder.Services.AddOpenIddict()
     .AddCore(options => {
