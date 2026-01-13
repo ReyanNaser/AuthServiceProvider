@@ -2,10 +2,13 @@ using AuthServiceProvider;
 using AuthServiceProvider.Data;
 using AuthServiceProvider.Features;
 using AuthServiceProvider.Options;
+using AuthServiceProvider.Workers;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using NATS.Client.Core;
+using NATS.Client.Serializers.Json;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
 using System.Security.Claims;
@@ -30,6 +33,19 @@ builder.Services.AddHostedService<SeedWorker>();
 
 builder.Services.Configure<SeedDataOptions>(
     builder.Configuration.GetSection("SeedData"));
+
+builder.Services.AddSingleton<INatsConnection>(sp =>
+{
+    var opts = new NatsOpts
+    {
+        Url = "nats://localhost:4222",
+        SerializerRegistry = NatsJsonSerializerRegistry.Default // precise fix
+    };
+    return new NatsConnection(opts);
+});
+// Register the worker
+builder.Services.AddHostedService<UserCreationWorker>();
+
 
 builder.Services.AddOpenIddict()
     .AddCore(options => {
