@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using NATS.Client.Core;
+using NATS.Client.JetStream;
 using NATS.Client.Serializers.Json;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
@@ -39,9 +40,16 @@ builder.Services.AddSingleton<INatsConnection>(sp =>
     var opts = new NatsOpts
     {
         Url = "nats://localhost:4222",
-        SerializerRegistry = NatsJsonSerializerRegistry.Default // precise fix
+        SerializerRegistry = NatsJsonSerializerRegistry.Default,
+        Name = "AuthService"
     };
     return new NatsConnection(opts);
+});
+
+builder.Services.AddSingleton<INatsJSContext>(sp =>
+{
+    var nats = sp.GetRequiredService<INatsConnection>();
+    return new NatsJSContext(nats);
 });
 // Register the worker
 builder.Services.AddHostedService<UserCreationWorker>();
